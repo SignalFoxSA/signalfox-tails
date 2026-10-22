@@ -123,7 +123,7 @@
       <div class="story-meta">
         <span class="pill blue">Fantasy Adventure</span>
         <span class="pill blue">11 min</span>
-        <a class="voice-chip" href="screen-09.html">🔊 Nova</a>
+        <a class="voice-chip" id="voiceChip" href="screen-09.html">🔊 Nova</a>
       </div>
     </div>
 
@@ -182,7 +182,9 @@
   <script src="../js/stars.js"></script>
   <script src="../js/app.js"></script>
   <script>
-    // ── Simulated playback (no audio until the TTS phase) ──
+    // ── Playback ── Progress/highlighting run on a timer (as in the original);
+    //    NARRATION is real: the device voice reads the chapter aloud (placeholder
+    //    until a TTS provider is chosen). Voice = the one picked on screen-09. ──
     const TOTAL = 664;              // 11:04
     let secs = 252;                 // starts at 4:12, as in the original
     let playing = false;
@@ -197,6 +199,53 @@
       p.innerHTML = words.map(w => `<span class="w">${w}</span>`).join(' ');
       wordEls.push(...p.querySelectorAll('.w'));
     });
+
+    // ── Narration engine (device text-to-speech) ──
+    const VOICE_FX = { Nova:{pitch:1.0,rate:1.0}, Luna:{pitch:1.1,rate:0.95}, Atlas:{pitch:0.7,rate:0.95}, Milo:{pitch:1.3,rate:1.1}, Ruby:{pitch:1.05,rate:1.05}, Echo:{pitch:0.9,rate:0.9}, Sage:{pitch:0.6,rate:0.85}, Willow:{pitch:1.15,rate:0.9}, Bram:{pitch:0.8,rate:1.05}, Pixie:{pitch:1.5,rate:1.15} };
+    const voiceName = localStorage.getItem('tails.voice') || 'Nova';
+    const fx = VOICE_FX[voiceName] || VOICE_FX.Nova;
+    document.getElementById('voiceChip').textContent = '🔊 ' + voiceName;
+    const canSpeak = 'speechSynthesis' in window;
+    const paraEls = [...document.querySelectorAll('#storyText p')];
+    const paraStartWord = []; let _acc = 0;
+    paraEls.forEach(pe => { paraStartWord.push(_acc); _acc += pe.querySelectorAll('.w').length; });
+    let speakPara = -1;   // paragraph currently being read
+    let speechLive = false;
+
+    function paraIndexForSecs() {
+      const target = (secs / TOTAL) * wordEls.length;
+      let idx = 0;
+      paraStartWord.forEach((start, i) => { if (target >= start) idx = i; });
+      return idx;
+    }
+    function speakFrom(idx) {
+      if (!canSpeak) return;
+      speechSynthesis.cancel();
+      speakPara = idx;
+      if (idx >= paraEls.length) { setPlaying(false); secs = TOTAL; render(); return; }
+      // resync the visual progress to the start of this paragraph
+      secs = Math.round((paraStartWord[idx] / wordEls.length) * TOTAL);
+      render();
+      const u = new SpeechSynthesisUtterance(paraEls[idx].textContent.trim());
+      u.lang = 'en-US';
+      u.pitch = fx.pitch;
+      u.rate = fx.rate * speeds[spIdx];
+      const vs = speechSynthesis.getVoices().filter(v => v.lang && v.lang.startsWith('en'));
+      if (vs.length) u.voice = vs[0];
+      u.onend = () => { if (playing && speakPara === idx) speakFrom(idx + 1); };
+      u.onerror = () => { /* keep the timer visuals running silently */ };
+      speechLive = true;
+      speechSynthesis.speak(u);
+    }
+    function narrationPlay() {
+      if (!canSpeak) { showToast('Narration is not available on this device yet'); return; }
+      if (speechLive && speechSynthesis.paused) { speechSynthesis.resume(); return; }
+      speakFrom(paraIndexForSecs());
+    }
+    function narrationPause() { if (canSpeak && speechLive) speechSynthesis.pause(); }
+    function narrationRestart() { if (playing) speakFrom(paraIndexForSecs()); }
+    window.addEventListener('pagehide', () => { if (canSpeak) speechSynthesis.cancel(); });
+    if (canSpeak) speechSynthesis.getVoices();
 
     const playBtn = document.getElementById('playBtn');
     const timeNow = document.getElementById('timeNow');
@@ -239,7 +288,7 @@
           secs = Math.min(TOTAL, secs + speeds[spIdx]);
           render();
         }
-        if (secs >= TOTAL) setPlaying(false);
+        if (secs >= TOTAL) { if (canSpeak) speechSynthesis.cancel(); setPlaying(false); }
       }, 1000);
     }
     function stopTick() { clearInterval(ticker); ticker = null; }
@@ -250,7 +299,8 @@
       if (on) {
         if (secs >= TOTAL) { secs = 0; finishBtn.classList.remove('show'); }
         startTick();
-      } else stopTick();
+        narrationPlay();
+      } else { stopTick(); narrationPause(); }
       render();
     }
     function togglePlay() { setPlaying(!playing); }
@@ -259,6 +309,7 @@
       secs = Math.max(0, Math.min(TOTAL, secs + d));
       if (secs < TOTAL) finishBtn.classList.remove('show');
       render();
+      narrationRestart();
     }
 
     document.getElementById('scrub').addEventListener('click', (e) => {
@@ -267,11 +318,13 @@
       secs = p * TOTAL;
       if (secs < TOTAL) finishBtn.classList.remove('show');
       render();
+      narrationRestart();
     });
 
     function cycleSpeed() {
       spIdx = (spIdx + 1) % speeds.length;
       document.getElementById('speedIc').textContent = speeds[spIdx] + '×';
+      narrationRestart();
     }
 
     function toggleSave() {
