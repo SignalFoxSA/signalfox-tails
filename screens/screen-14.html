@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Tails — Screen 14 · Settings &amp; Upgrade</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  .premium-card {
+    border: 1.5px solid rgba(255,193,62,0.55);
+    background: linear-gradient(140deg, rgba(255,193,62,0.14), rgba(26,111,255,0.08));
+    text-align: center;
+  }
+  .premium-name { font-size: 19px; font-weight: 900; color: var(--gold-light); }
+  .premium-sub { font-size: 13px; color: var(--text-white); font-weight: 600; opacity: 0.85; margin-top: 4px; }
+  .bill-toggle {
+    display: flex; gap: 4px; margin: 16px auto 6px; width: fit-content;
+    background: rgba(255,255,255,0.07); border: 1px solid var(--card-border);
+    border-radius: 999px; padding: 4px;
+  }
+  .bill-toggle button {
+    border: none; cursor: pointer; border-radius: 999px;
+    padding: 8px 18px; background: transparent;
+    color: var(--text-muted); font-family: 'Nunito', sans-serif;
+    font-size: 13.5px; font-weight: 800;
+    display: flex; align-items: center; gap: 7px;
+  }
+  .bill-toggle button.on { background: var(--gold); color: #231600; }
+  .price-line { display: flex; align-items: baseline; justify-content: center; gap: 6px; margin: 8px 0 14px; }
+  .price-big { font-size: 42px; font-weight: 900; }
+  .price-per { font-size: 15px; color: var(--text-muted); font-weight: 700; }
+  .save-pill { display: none; }
+  .save-pill.show { display: inline-flex; }
+
+  .compare-head, .compare-row {
+    display: flex; align-items: center; padding: 9px 2px;
+  }
+  .compare-head { border-bottom: 1px solid rgba(255,255,255,0.10); padding-top: 2px; }
+  .compare-row + .compare-row { border-top: 1px solid rgba(255,255,255,0.06); }
+  .cmp-label { flex: 1; font-size: 14px; font-weight: 700; }
+  .compare-head .cmp-label { font-weight: 800; color: var(--text-muted); font-size: 12.5px; letter-spacing: 0.04em; }
+  .cmp-col { width: 76px; flex: none; text-align: center; font-size: 13.5px; font-weight: 800; }
+  .compare-head .cmp-col { font-size: 11.5px; letter-spacing: 0.08em; color: var(--text-muted); }
+  .cmp-col.prem { color: var(--gold); }
+
+  .settings-card { padding: 6px 16px; }
+  .restore-btn { align-self: center; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <canvas id="starCanvas"></canvas>
+
+  <div class="status-bar"><span>9:41</span><span class="status-dots">●●●</span></div>
+
+  <div class="screen-head">
+    <a class="back-btn" href="screen-13.html">‹</a>
+    <div>
+      <div class="screen-title">Settings &amp; Upgrade</div>
+    </div>
+  </div>
+
+  <div class="scroll-area">
+    <div class="card premium-card">
+      <div class="premium-name">✨ Tails Premium</div>
+      <div class="premium-sub">Unlimited stories · 10 voices + cloning · Family Mode</div>
+
+      <div class="bill-toggle">
+        <button id="billMonthly" class="on" onclick="setBilling('monthly')">Monthly</button>
+        <button id="billYearly" onclick="setBilling('yearly')">Yearly</button>
+      </div>
+
+      <div class="price-line">
+        <span class="price-big" id="priceBig">$4.99</span>
+        <span class="price-per" id="pricePer">/month</span>
+        <span class="pill save-pill" id="savePill">Save 33%</span>
+      </div>
+
+      <button class="btn btn-gold" onclick="showToast('Payments arrive with real accounts — not yet')">Upgrade to Premium</button>
+    </div>
+
+    <div class="section-h"><span>Free vs Premium</span></div>
+    <div class="card" style="padding:12px 16px;">
+      <div class="compare-head">
+        <span class="cmp-label"></span>
+        <span class="cmp-col">FREE</span>
+        <span class="cmp-col">PREMIUM</span>
+      </div>
+      <div class="compare-row"><span class="cmp-label">Stories / month</span><span class="cmp-col">5</span><span class="cmp-col prem">Unlimited</span></div>
+      <div class="compare-row"><span class="cmp-label">Genres</span><span class="cmp-col">16</span><span class="cmp-col prem">16</span></div>
+      <div class="compare-row"><span class="cmp-label">Voices</span><span class="cmp-col">2</span><span class="cmp-col prem">10 + cloning</span></div>
+      <div class="compare-row"><span class="cmp-label">Family Mode</span><span class="cmp-col">—</span><span class="cmp-col prem">✓</span></div>
+      <div class="compare-row"><span class="cmp-label">Community</span><span class="cmp-col">✓</span><span class="cmp-col prem">✓</span></div>
+    </div>
+
+    <div class="section-h"><span>Settings</span></div>
+    <div class="card settings-card">
+      <div class="list-row">
+        <span class="lr-main"><span class="lr-title">Notifications</span><br><span class="lr-sub">Story picks and streak alerts</span></span>
+        <label class="toggle"><input type="checkbox" checked><span class="track"></span></label>
+      </div>
+      <div class="list-row">
+        <span class="lr-main"><span class="lr-title">Autoplay next story</span><br><span class="lr-sub">Keep the tales rolling</span></span>
+        <label class="toggle"><input type="checkbox"><span class="track"></span></label>
+      </div>
+      <div class="list-row">
+        <span class="lr-main"><span class="lr-title">Download on Wi-Fi only</span><br><span class="lr-sub">Save mobile data</span></span>
+        <label class="toggle"><input type="checkbox" checked><span class="track"></span></label>
+      </div>
+      <div class="list-row">
+        <span class="lr-main"><span class="lr-title">Bedtime reminders</span><br><span class="lr-sub">A gentle nudge at bedtime</span></span>
+        <label class="toggle"><input type="checkbox" checked><span class="track"></span></label>
+      </div>
+    </div>
+
+    <div class="card settings-card">
+      <button class="list-row" onclick="showToast('Language options arrive at launch')">
+        <span class="lr-main"><span class="lr-title">Language</span></span>
+        <span class="lr-sub" style="font-size:13.5px;">English</span>
+        <span class="lr-arrow">›</span>
+      </button>
+      <button class="list-row" onclick="showToast('Tails v2.0.0 · Produced by SignalFox')">
+        <span class="lr-main"><span class="lr-title">About</span></span>
+        <span class="lr-arrow">›</span>
+      </button>
+    </div>
+
+    <button class="btn btn-ghost restore-btn" onclick="showToast('No purchases to restore yet')">Restore Purchase</button>
+  </div>
+
+  <nav class="shelf">
+    <a class="shelf-item" href="screen-05.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></svg><span>Home</span></a>
+    <a class="shelf-item" href="screen-11.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg><span>Library</span></a>
+    <a class="shelf-item shelf-create" href="screen-07.html"><span class="create-orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M12 3v18M3 12h18"/></svg></span><span>Create</span></a>
+    <a class="shelf-item" href="screen-15.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.2 3.4-5 6.5-5s5.7 1.8 6.5 5"/><circle cx="17.5" cy="9" r="2.6"/><path d="M16 15.2c2.9.3 4.9 1.9 5.5 4.8"/></svg><span>Community</span></a>
+    <a class="shelf-item on" href="screen-13.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.3-6 8-6s7 2 8 6"/></svg><span>Profile</span></a>
+  </nav>
+
+  <script src="../js/stars.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    function setBilling(plan) {
+      const monthly = plan === 'monthly';
+      document.getElementById('billMonthly').classList.toggle('on', monthly);
+      document.getElementById('billYearly').classList.toggle('on', !monthly);
+      document.getElementById('priceBig').textContent = monthly ? '$4.99' : '$39.99';
+      document.getElementById('pricePer').textContent = monthly ? '/month' : '/year';
+      document.getElementById('savePill').classList.toggle('show', !monthly);
+    }
+  </script>
+</div>
+</body>
+</html>

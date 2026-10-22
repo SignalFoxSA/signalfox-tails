@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Tails — Screen 01 · Splash</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  .content {
+    position: relative; z-index: 5;
+    flex: 1; width: 100%;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 22px 34px 36px;
+  }
+
+  /* ── Tails mark (own non-fox app mark, v1 draft) ── */
+  .mark { margin-top: 14px; filter: drop-shadow(0 14px 30px rgba(26,111,255,0.35)); }
+
+  .wordmark {
+    margin-top: 18px;
+    font-size: 56px; font-weight: 900; letter-spacing: -0.01em; line-height: 1;
+  }
+  .wordmark .tail-s { color: var(--gold); }
+  .app-kind {
+    margin-top: 10px;
+    font-size: 12px; font-weight: 800;
+    letter-spacing: 0.42em; text-indent: 0.42em;
+    color: var(--blue-soft);
+    text-transform: uppercase;
+  }
+
+  /* ── Rotating tagline (copy carried over from the original splash) ── */
+  .tagline-zone {
+    margin-top: 26px; height: 54px;
+    display: flex; align-items: flex-start; justify-content: center;
+    text-align: center; padding: 0 8px;
+  }
+  .tagline {
+    font-family: 'Lora', serif; font-style: italic;
+    font-size: 21px; font-weight: 600; color: var(--gold-light);
+    opacity: 1; transition: opacity 0.6s ease;
+  }
+  .tagline.fade { opacity: 0; }
+  .tagline-rule { width: 44px; height: 2px; border-radius: 2px; background: var(--gold); margin: 12px auto 0; opacity: 0.8; }
+
+  .spacer { flex: 1; }
+
+  /* ── Actions ── */
+  .actions { width: 100%; display: flex; flex-direction: column; gap: 12px; }
+  .guest-link { text-align: center; margin-top: 2px; }
+
+  /* ── Language selector ── */
+  .lang-zone { margin-top: 16px; position: relative; }
+  .lang-btn {
+    background: var(--card); border: 1px solid var(--card-border);
+    color: var(--text-white);
+    font-family: 'Nunito', sans-serif; font-size: 13.5px; font-weight: 700;
+    padding: 9px 16px; border-radius: 999px; cursor: pointer;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .lang-menu {
+    position: absolute; bottom: 48px; left: 50%; transform: translateX(-50%);
+    width: 210px; padding: 8px;
+    background: rgba(4, 13, 46, 0.97);
+    border: 1px solid var(--card-border); border-radius: 16px;
+    box-shadow: 0 24px 50px rgba(0,0,0,0.55);
+    display: none; z-index: 20;
+  }
+  .lang-menu.open { display: block; }
+  .lang-menu button {
+    display: flex; width: 100%; align-items: center; gap: 10px;
+    background: transparent; border: none; cursor: pointer;
+    color: var(--text-white); font-family: 'Nunito', sans-serif;
+    font-size: 14px; font-weight: 700; text-align: left;
+    padding: 9px 10px; border-radius: 10px;
+  }
+  .lang-menu button:hover { background: rgba(26,111,255,0.16); }
+
+  .footer { margin-top: 16px; display: flex; flex-direction: column; align-items: center; gap: 9px; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <canvas id="starCanvas"></canvas>
+
+  <div class="status-bar"><span>9:41</span><span class="status-dots">●●●</span></div>
+
+  <div class="content">
+
+    <!-- TAILS MARK v1: crescent moon over an open book, pages curling into a tail -->
+    <svg class="mark" width="168" height="168" viewBox="0 0 200 200" fill="none" aria-label="Tails logo">
+      <defs>
+        <linearGradient id="tailGrad" x1="20" y1="150" x2="180" y2="150" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#1A6FFF"/>
+          <stop offset="1" stop-color="#6FA8FF"/>
+        </linearGradient>
+        <linearGradient id="pageGrad" x1="100" y1="96" x2="100" y2="162" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#FFFFFF"/>
+          <stop offset="1" stop-color="#C9DBFF"/>
+        </linearGradient>
+      </defs>
+
+      <!-- crescent moon -->
+      <path d="M132 16a36 36 0 1 0 20 65 29 29 0 1 1-20-65z" fill="#FFC13E"/>
+      <!-- sparkles -->
+      <path d="M52 38l2.6 6.4L61 47l-6.4 2.6L52 56l-2.6-6.4L43 47l6.4-2.6L52 38z" fill="#FFC13E"/>
+      <path d="M168 108l1.8 4.5 4.5 1.8-4.5 1.8L168 121l-1.8-4.9-4.5-1.8 4.5-1.8L168 108z" fill="#6FA8FF"/>
+
+      <!-- open book -->
+      <path d="M100 112c-15-11-36-15-54-11v52c18-4 39 0 54 11 15-11 36-15 54-11v-52c-18-4-39 0-54 11z" fill="url(#pageGrad)"/>
+      <path d="M100 112c-15-11-36-15-54-11v52c18-4 39 0 54 11 15-11 36-15 54-11v-52c-18-4-39 0-54 11z" stroke="#1A6FFF" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M100 112v52" stroke="#1A6FFF" stroke-width="3"/>
+      <path d="M58 112c10-2 20 0 30 5M58 126c10-2 20 0 30 5M58 140c10-2 20 0 30 5M112 117c10-5 20-7 30-5M112 131c10-5 20-7 30-5M112 145c10-5 20-7 30-5" stroke="#1A6FFF" stroke-width="2.4" stroke-linecap="round" opacity="0.55"/>
+
+      <!-- the tail: a ribbon curling out of the book -->
+      <path d="M100 166c-22 14-52 12-64-4-8-11 2-24 14-20 10 3 10 16 1 19" stroke="url(#tailGrad)" stroke-width="6" stroke-linecap="round"/>
+      <path d="M142 158c14-2 26-10 32-22" stroke="url(#tailGrad)" stroke-width="6" stroke-linecap="round"/>
+      <path d="M178 122l2.2 5.6 5.6 2.2-5.6 2.2-2.2 5.6-2.2-5.6-5.6-2.2 5.6-2.2 2.2-5.6z" fill="#FFC13E"/>
+    </svg>
+
+    <div class="wordmark">Tail<span class="tail-s">s</span></div>
+    <div class="app-kind">AI Storytelling</div>
+
+    <div class="tagline-zone">
+      <div>
+        <div class="tagline" id="tagline">Adventure Awaits Every Night</div>
+        <div class="tagline-rule"></div>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="actions">
+      <a class="btn btn-gold" href="screen-02.html">Get Started</a>
+      <a class="btn btn-blue-outline" href="screen-04.html">Log In</a>
+      <a class="btn btn-ghost guest-link" href="screen-05.html">Continue as Guest →</a>
+    </div>
+
+    <div class="lang-zone">
+      <button class="lang-btn" id="langBtn" onclick="toggleLang()">🌐 <span id="langLabel">English</span> ▾</button>
+      <div class="lang-menu" id="langMenu">
+        <button onclick="pickLang('English')">🇿🇦 English</button>
+        <button onclick="pickLang('Afrikaans')">🇿🇦 Afrikaans</button>
+        <button onclick="pickLang('Français')">🇫🇷 Français</button>
+        <button onclick="pickLang('Español')">🇪🇸 Español</button>
+        <button onclick="pickLang('Deutsch')">🇩🇪 Deutsch</button>
+        <button onclick="pickLang('Português')">🇵🇹 Português</button>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="legal-links"><a href="#">Terms</a> &nbsp;·&nbsp; <a href="#">Privacy</a> &nbsp;·&nbsp; v2.0.0</div>
+      <div class="parent-credit">Produced by <b>SignalFox</b></div>
+    </div>
+
+  </div>
+  <script src="../js/stars.js"></script>
+  <script>
+    // Tagline rotation — copy carried over from the original splash screen.
+    const taglines = [
+      'Adventure Awaits Every Night',
+      'Tales Told Just for You',
+      'Where Imagination Comes Alive',
+      'Your Story Starts Here',
+      'Bedtime Magic, Every Night'
+    ];
+    let tIdx = 0;
+    const tagEl = document.getElementById('tagline');
+    setInterval(() => {
+      tagEl.classList.add('fade');
+      setTimeout(() => {
+        tIdx = (tIdx + 1) % taglines.length;
+        tagEl.textContent = taglines[tIdx];
+        tagEl.classList.remove('fade');
+      }, 620);
+    }, 3400);
+
+    // Language selector — prototype: changes the label only, nothing is stored yet.
+    function toggleLang() { document.getElementById('langMenu').classList.toggle('open'); }
+    function pickLang(name) {
+      document.getElementById('langLabel').textContent = name;
+      document.getElementById('langMenu').classList.remove('open');
+    }
+    document.addEventListener('click', (e) => {
+      const zone = document.querySelector('.lang-zone');
+      if (!zone.contains(e.target)) document.getElementById('langMenu').classList.remove('open');
+    });
+  </script>
+</div>
+</body>
+</html>

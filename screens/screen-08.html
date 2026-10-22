@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<!-- NOTE: Playback on this screen is SIMULATED (a timer + word highlighting, no audio) until the TTS phase. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Tails — Screen 08 · Story Player</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  .scroll-area { padding-bottom: 18px; }
+
+  .story-title { font-size: 25px; font-weight: 900; line-height: 1.2; }
+  .story-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .voice-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; font-weight: 800; letter-spacing: 0.06em;
+    padding: 4px 10px; border-radius: 999px; text-decoration: none;
+    background: rgba(255,193,62,0.16); color: var(--gold); border: 1px solid rgba(255,193,62,0.4);
+  }
+
+  .chapter-h { font-size: 16.5px; font-weight: 900; color: var(--gold-light); }
+  .mood { font-size: 13px; color: var(--text-muted); font-weight: 700; margin-top: 3px; }
+
+  #storyText p {
+    font-family: 'Lora', serif;
+    font-size: 17.5px; line-height: 1.75; font-weight: 400;
+    color: rgba(255,255,255,0.82);
+    margin-bottom: 16px;
+  }
+  #storyText p:last-child { margin-bottom: 0; }
+  #storyText .w { border-radius: 4px; transition: color 0.2s, background 0.2s; }
+  #storyText .w.on { color: var(--gold-light); }
+  #storyText .w.now { background: rgba(255,193,62,0.22); color: #fff; }
+
+  /* ── Player bar (sits above the shelf) ── */
+  .player-wrap {
+    position: relative; z-index: 45; width: 100%;
+    padding: 0 14px; margin-bottom: 100px;
+  }
+  .player-bar {
+    background: rgba(3, 11, 42, 0.94);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 22px;
+    box-shadow: 0 18px 44px rgba(0,0,0,0.55);
+    padding: 13px 16px 12px;
+  }
+  .segments { display: flex; justify-content: space-between; margin-bottom: 7px; }
+  .segments span {
+    font-size: 10.5px; font-weight: 800; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-muted);
+  }
+  .segments span.on { color: var(--gold); }
+  .scrub {
+    position: relative; height: 22px; cursor: pointer;
+    display: flex; align-items: center;
+  }
+  .scrub-track {
+    position: relative; width: 100%; height: 7px; border-radius: 99px;
+    background: rgba(255,255,255,0.12); overflow: visible;
+  }
+  .scrub-fill {
+    height: 100%; border-radius: 99px; width: 38%;
+    background: linear-gradient(90deg, var(--blue), var(--gold));
+  }
+  .scrub-dot {
+    position: absolute; top: 50%; left: 38%;
+    width: 15px; height: 15px; border-radius: 50%;
+    background: var(--gold); border: 2.5px solid #0a1a52;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  }
+  .seg-div { position: absolute; top: -2px; width: 2px; height: 11px; background: rgba(1,12,63,0.85); border-radius: 2px; }
+  .time-row {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 12.5px; font-weight: 800; color: var(--text-muted);
+    margin-top: 5px; font-variant-numeric: tabular-nums;
+  }
+  .controls { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+  .ctl {
+    background: none; border: none; cursor: pointer;
+    color: var(--text-white); font-family: 'Nunito', sans-serif;
+    font-size: 12px; font-weight: 800; letter-spacing: 0.04em;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    min-width: 46px; padding: 4px 2px;
+  }
+  .ctl .ic { font-size: 19px; line-height: 1; }
+  .ctl.saved { color: var(--gold); }
+  .play-btn {
+    width: 58px; height: 58px; border-radius: 50%; border: none; cursor: pointer;
+    background: linear-gradient(180deg, var(--gold-light), var(--gold));
+    color: #231600; font-size: 21px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 10px 24px rgba(255,193,62,0.4);
+  }
+  .play-btn:active { transform: scale(0.96); }
+  .seek-btn .ic { font-size: 21px; }
+  .finish-btn { display: none; margin-top: 12px; }
+  .finish-btn.show { display: flex; }
+  .mark-complete {
+    display: block; text-align: center; margin-top: 10px;
+    font-size: 13px; font-weight: 700; color: var(--text-muted); text-decoration: none;
+  }
+  .mark-complete:hover { color: var(--gold); }
+</style>
+</head>
+<body>
+<div class="phone">
+  <canvas id="starCanvas"></canvas>
+
+  <div class="status-bar"><span>9:41</span><span class="status-dots">●●●</span></div>
+
+  <div class="screen-head">
+    <a class="back-btn" href="screen-05.html">‹</a>
+    <div>
+      <div class="screen-title">Now Playing</div>
+      <div class="screen-sub">Chapter 1 of the story</div>
+    </div>
+  </div>
+
+  <div class="scroll-area">
+    <div>
+      <div class="story-title">The Fox Who Swallowed a Star</div>
+      <div class="story-meta">
+        <span class="pill blue">Fantasy Adventure</span>
+        <span class="pill blue">11 min</span>
+        <a class="voice-chip" href="screen-09.html">🔊 Nova</a>
+      </div>
+    </div>
+
+    <div>
+      <div class="chapter-h">Chapter 1 — The Night She Leapt</div>
+      <div class="mood">🌙 Dreamy &amp; Mysterious</div>
+    </div>
+
+    <div id="storyText">
+      <p>Long before the mountains had names, when the sky still remembered how to blush, there lived a fox with ember-bright eyes who had never once looked down.</p>
+      <p>She ran along the ridge of the world's highest hill every evening, her tail a brushstroke of fire against the cooling dark. The other animals called her reckless. She called herself free.</p>
+      <p>One night, chasing a particularly stubborn firefly, she leapt — and her jaw snapped shut around something that was not the firefly at all. It was cold. It hummed. It tasted of distance and old rain. She had swallowed a fallen star.</p>
+      <p>For three days she glowed from the inside. Light leaked between her ribs like lantern seams. The birds mistook her for dawn and sang at midnight. The river fish rose to the surface just to look at her.</p>
+      <p>On the fourth day, a very old tortoise found her sitting alone on a stone. "You look troubled," he said, which was his way of saying hello. "I am afraid," she admitted, which was her way of asking for help.</p>
+      <p>"The star will find its way," said the tortoise. "Stars always do. But you must walk north until the cold becomes a sound, and then you must listen." She didn't know what that meant. She went anyway.</p>
+      <p>The northern cold was blue and humming, just as the tortoise had promised. And in the silence between heartbeats, she finally heard it — the star inside her, singing its way home.</p>
+    </div>
+  </div>
+
+  <div class="player-wrap">
+    <div class="player-bar">
+      <div class="segments" id="segments">
+        <span>Begin</span><span>Rising</span><span>Peak</span><span>Ending</span>
+      </div>
+      <div class="scrub" id="scrub">
+        <div class="scrub-track">
+          <div class="scrub-fill" id="scrubFill"></div>
+          <div class="seg-div" style="left:25%"></div>
+          <div class="seg-div" style="left:50%"></div>
+          <div class="seg-div" style="left:75%"></div>
+          <div class="scrub-dot" id="scrubDot"></div>
+        </div>
+      </div>
+      <div class="time-row"><span id="timeNow">4:12</span><span id="timeTotal">11:04</span></div>
+      <div class="controls">
+        <button class="ctl" id="saveBtn" onclick="toggleSave()"><span class="ic">🔖</span>SAVE</button>
+        <button class="ctl seek-btn" onclick="seekBy(-10)"><span class="ic">↺</span>−10s</button>
+        <button class="play-btn" id="playBtn" onclick="togglePlay()">▶</button>
+        <button class="ctl seek-btn" onclick="seekBy(10)"><span class="ic">↻</span>+10s</button>
+        <button class="ctl" onclick="cycleSpeed()"><span class="ic" id="speedIc">1×</span>SPEED</button>
+        <button class="ctl" onclick="showToast('Sharing arrives with Community')"><span class="ic">↗</span>SHARE</button>
+      </div>
+      <a class="btn btn-gold finish-btn" id="finishBtn" href="screen-12.html">Finish Story →</a>
+    </div>
+    <a class="mark-complete" href="screen-12.html">Mark complete</a>
+  </div>
+
+<nav class="shelf">
+<a class="shelf-item" href="screen-05.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></svg><span>Home</span></a>
+<a class="shelf-item" href="screen-11.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg><span>Library</span></a>
+<a class="shelf-item shelf-create" href="screen-07.html"><span class="create-orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M12 3v18M3 12h18"/></svg></span><span>Create</span></a>
+<a class="shelf-item" href="screen-15.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.2 3.4-5 6.5-5s5.7 1.8 6.5 5"/><circle cx="17.5" cy="9" r="2.6"/><path d="M16 15.2c2.9.3 4.9 1.9 5.5 4.8"/></svg><span>Community</span></a>
+<a class="shelf-item" href="screen-13.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.3-6 8-6s7 2 8 6"/></svg><span>Profile</span></a>
+</nav>
+
+  <script src="../js/stars.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    // ── Simulated playback (no audio until the TTS phase) ──
+    const TOTAL = 664;              // 11:04
+    let secs = 252;                 // starts at 4:12, as in the original
+    let playing = false;
+    let ticker = null;
+    const speeds = [1, 1.25, 1.5, 2];
+    let spIdx = 0;
+
+    // Wrap every word so it can highlight as the story "plays"
+    const wordEls = [];
+    document.querySelectorAll('#storyText p').forEach(p => {
+      const words = p.textContent.trim().split(/\s+/);
+      p.innerHTML = words.map(w => `<span class="w">${w}</span>`).join(' ');
+      wordEls.push(...p.querySelectorAll('.w'));
+    });
+
+    const playBtn = document.getElementById('playBtn');
+    const timeNow = document.getElementById('timeNow');
+    const scrubFill = document.getElementById('scrubFill');
+    const scrubDot = document.getElementById('scrubDot');
+    const segEls = document.querySelectorAll('#segments span');
+    const finishBtn = document.getElementById('finishBtn');
+    let lastActive = -1;
+
+    function fmt(s) {
+      s = Math.max(0, Math.min(TOTAL, Math.floor(s)));
+      return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+    }
+
+    function render() {
+      const prog = TOTAL ? secs / TOTAL : 0;
+      timeNow.textContent = fmt(secs);
+      scrubFill.style.width = (prog * 100) + '%';
+      scrubDot.style.left = (prog * 100) + '%';
+      const seg = Math.min(3, Math.floor(prog * 4));
+      segEls.forEach((el, i) => el.classList.toggle('on', i === seg));
+
+      const activeCount = Math.floor(prog * wordEls.length);
+      wordEls.forEach((w, i) => {
+        w.classList.toggle('on', i < activeCount);
+        w.classList.toggle('now', i === activeCount - 1);
+      });
+      if (playing && activeCount !== lastActive && wordEls[activeCount - 1]) {
+        wordEls[activeCount - 1].scrollIntoView({ block: 'center', behavior: 'smooth' });
+      }
+      lastActive = activeCount;
+
+      if (secs >= TOTAL) finishBtn.classList.add('show');
+    }
+
+    function startTick() {
+      if (ticker) return;
+      ticker = setInterval(() => {
+        if (secs < TOTAL) {
+          secs = Math.min(TOTAL, secs + speeds[spIdx]);
+          render();
+        }
+        if (secs >= TOTAL) setPlaying(false);
+      }, 1000);
+    }
+    function stopTick() { clearInterval(ticker); ticker = null; }
+
+    function setPlaying(on) {
+      playing = on;
+      playBtn.textContent = on ? '❚❚' : '▶';
+      if (on) {
+        if (secs >= TOTAL) { secs = 0; finishBtn.classList.remove('show'); }
+        startTick();
+      } else stopTick();
+      render();
+    }
+    function togglePlay() { setPlaying(!playing); }
+
+    function seekBy(d) {
+      secs = Math.max(0, Math.min(TOTAL, secs + d));
+      if (secs < TOTAL) finishBtn.classList.remove('show');
+      render();
+    }
+
+    document.getElementById('scrub').addEventListener('click', (e) => {
+      const r = e.currentTarget.getBoundingClientRect();
+      const p = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+      secs = p * TOTAL;
+      if (secs < TOTAL) finishBtn.classList.remove('show');
+      render();
+    });
+
+    function cycleSpeed() {
+      spIdx = (spIdx + 1) % speeds.length;
+      document.getElementById('speedIc').textContent = speeds[spIdx] + '×';
+    }
+
+    function toggleSave() {
+      const b = document.getElementById('saveBtn');
+      b.classList.toggle('saved');
+      showToast(b.classList.contains('saved') ? 'Saved to your Library' : 'Removed from your Library');
+    }
+
+    document.getElementById('timeTotal').textContent = fmt(TOTAL);
+    render();
+  </script>
+</div>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Tails — Screen 15 · Community</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  .cta-card {
+    display: flex; align-items: center; gap: 13px;
+    border: 1.5px solid rgba(255,193,62,0.55);
+    background: linear-gradient(120deg, rgba(255,193,62,0.16), rgba(26,111,255,0.10));
+    color: var(--text-white); text-decoration: none;
+  }
+  .cta-title { font-size: 16px; font-weight: 900; color: var(--gold-light); }
+  .cta-sub { font-size: 13px; font-weight: 600; opacity: 0.88; margin-top: 2px; }
+  .feed-top { display: flex; gap: 13px; align-items: center; }
+  .cover {
+    width: 56px; height: 56px; flex: none; border-radius: 16px;
+    background: rgba(26,111,255,0.14); border: 1px solid var(--card-border);
+    display: flex; align-items: center; justify-content: center; font-size: 27px;
+  }
+  .feed-main { flex: 1; min-width: 0; }
+  .feed-title { font-size: 15.5px; font-weight: 800; }
+  .feed-meta { font-size: 12.5px; color: var(--text-muted); font-weight: 600; margin-top: 2px; }
+  .feed-sharer { font-size: 12.5px; color: var(--blue-soft); font-weight: 700; margin-top: 3px; }
+  .feed-actions { display: flex; gap: 10px; margin-top: 13px; }
+  .feed-actions .btn { padding: 11px 14px; font-size: 14px; }
+  .like-btn {
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    padding: 11px 16px; border-radius: var(--radius-btn);
+    background: rgba(255,255,255,0.05);
+    border: 1.5px solid var(--card-border);
+    color: var(--text-muted);
+    font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 800;
+    cursor: pointer; transition: 0.15s;
+  }
+  .like-btn .heart { font-size: 16px; line-height: 1; }
+  .like-btn.liked { color: var(--gold); border-color: rgba(255,193,62,0.55); background: rgba(255,193,62,0.10); }
+  .like-btn.liked .heart { color: var(--gold); }
+</style>
+</head>
+<body>
+<div class="phone">
+  <canvas id="starCanvas"></canvas>
+
+  <div class="status-bar"><span>9:41</span><span class="status-dots">●●●</span></div>
+
+  <div class="screen-head">
+    <div>
+      <div class="screen-title">Community</div>
+      <div class="screen-sub">Stories shared by listeners like you</div>
+    </div>
+  </div>
+
+  <div class="scroll-area">
+    <a class="card cta-card" href="screen-12.html">
+      <div style="font-size:29px;">🌟</div>
+      <div style="flex:1;">
+        <div class="cta-title">Share your story</div>
+        <div class="cta-sub">Earn +50 XP when you share</div>
+      </div>
+      <span style="color:var(--gold);font-size:19px;">›</span>
+    </a>
+
+    <div class="card">
+      <div class="feed-top">
+        <div class="cover">🌙</div>
+        <div class="feed-main">
+          <div class="feed-title">The Fox Who Swallowed a Star</div>
+          <div class="feed-meta">Fantasy Adventure · Nova</div>
+          <div class="feed-sharer">Shared by a Premium listener</div>
+        </div>
+      </div>
+      <div class="feed-actions">
+        <button class="like-btn" data-count="128" onclick="toggleLike(this)"><span class="heart">♥</span><span class="count">128</span></button>
+        <a class="btn btn-blue-outline" href="screen-08.html" style="flex:1;">▶ Listen</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="feed-top">
+        <div class="cover">⛰️</div>
+        <div class="feed-main">
+          <div class="feed-title">The Iron Summit</div>
+          <div class="feed-meta">Adventure · 5 min</div>
+          <div class="feed-sharer">Community Pick · ⭐ 4.8</div>
+        </div>
+      </div>
+      <div class="feed-actions">
+        <button class="like-btn" data-count="96" onclick="toggleLike(this)"><span class="heart">♥</span><span class="count">96</span></button>
+        <a class="btn btn-blue-outline" href="screen-08.html" style="flex:1;">▶ Listen</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="feed-top">
+        <div class="cover">⚔️</div>
+        <div class="feed-main">
+          <div class="feed-title">Blade of the North Wind</div>
+          <div class="feed-meta">Fantasy · 7 min</div>
+          <div class="feed-sharer">Trending this week · ⭐ 4.6</div>
+        </div>
+      </div>
+      <div class="feed-actions">
+        <button class="like-btn" data-count="87" onclick="toggleLike(this)"><span class="heart">♥</span><span class="count">87</span></button>
+        <a class="btn btn-blue-outline" href="screen-08.html" style="flex:1;">▶ Listen</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="feed-top">
+        <div class="cover">🌊</div>
+        <div class="feed-main">
+          <div class="feed-title">Lost at the Edge</div>
+          <div class="feed-meta">Thriller · 4 min</div>
+          <div class="feed-sharer">⭐ 4.7</div>
+        </div>
+      </div>
+      <div class="feed-actions">
+        <button class="like-btn" data-count="64" onclick="toggleLike(this)"><span class="heart">♥</span><span class="count">64</span></button>
+        <a class="btn btn-blue-outline" href="screen-08.html" style="flex:1;">▶ Listen</a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="shelf">
+    <a class="shelf-item" href="screen-05.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></svg><span>Home</span></a>
+    <a class="shelf-item" href="screen-11.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg><span>Library</span></a>
+    <a class="shelf-item shelf-create" href="screen-07.html"><span class="create-orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M12 3v18M3 12h18"/></svg></span><span>Create</span></a>
+    <a class="shelf-item on" href="screen-15.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.2 3.4-5 6.5-5s5.7 1.8 6.5 5"/><circle cx="17.5" cy="9" r="2.6"/><path d="M16 15.2c2.9.3 4.9 1.9 5.5 4.8"/></svg><span>Community</span></a>
+    <a class="shelf-item" href="screen-13.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.3-6 8-6s7 2 8 6"/></svg><span>Profile</span></a>
+  </nav>
+
+  <script src="../js/stars.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    // Likes are local to this prototype — heart fills gold, count steps up/down.
+    function toggleLike(btn) {
+      let n = parseInt(btn.dataset.count, 10);
+      const liked = btn.classList.toggle('liked');
+      n += liked ? 1 : -1;
+      btn.dataset.count = n;
+      btn.querySelector('.count').textContent = n;
+    }
+  </script>
+</div>
+</body>
+</html>

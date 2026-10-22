@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<!-- Draft structure — Family Mode rules to be shaped with Ian. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Tails — Screen 10 · Family Mode</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  .hero-row { display: flex; align-items: center; gap: 14px; }
+  .hero-main { flex: 1; }
+  .hero-title { font-size: 17.5px; font-weight: 900; }
+  .hero-sub { font-size: 13px; color: var(--text-muted); font-weight: 600; margin-top: 4px; line-height: 1.5; }
+
+  .add-card {
+    border: 1.5px dashed rgba(255,255,255,0.28);
+    border-radius: 20px; padding: 20px 16px;
+    display: flex; flex-direction: column; align-items: center; gap: 7px;
+    background: rgba(255,255,255,0.03);
+    color: var(--text-white); font-family: 'Nunito', sans-serif;
+    cursor: pointer; width: 100%;
+  }
+  .add-card .plus { font-size: 26px; color: var(--gold); line-height: 1; }
+  .add-card .t { font-size: 15px; font-weight: 800; }
+  .add-card .s { font-size: 12.5px; color: var(--text-muted); font-weight: 600; }
+
+  .profile-row { display: flex; align-items: center; gap: 13px; }
+  .avatar {
+    width: 48px; height: 48px; border-radius: 50%; flex: none;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 23px;
+    background: linear-gradient(150deg, var(--navy-light), var(--blue));
+    border: 1.5px solid rgba(255,255,255,0.18);
+  }
+  .p-main { flex: 1; }
+  .p-name { font-size: 15.5px; font-weight: 800; }
+  .p-sub { font-size: 12.5px; color: var(--text-muted); font-weight: 600; margin-top: 2px; }
+
+  .ctl-row { display: flex; align-items: center; gap: 13px; padding: 13px 0; }
+  .ctl-row + .ctl-row { border-top: 1px solid rgba(255,255,255,0.06); }
+  .ctl-row:first-of-type { padding-top: 4px; }
+  .ctl-row:last-of-type { padding-bottom: 2px; }
+  .ctl-main { flex: 1; }
+  .ctl-title { font-size: 15px; font-weight: 800; }
+  .ctl-sub { font-size: 12.5px; color: var(--text-muted); font-weight: 600; margin-top: 2px; line-height: 1.45; }
+
+  .footnote { font-size: 12.5px; color: var(--text-muted); font-weight: 600; text-align: center; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <canvas id="starCanvas"></canvas>
+
+  <div class="status-bar"><span>9:41</span><span class="status-dots">●●●</span></div>
+
+  <div class="screen-head">
+    <a class="back-btn" href="screen-13.html">‹</a>
+    <div>
+      <div class="screen-title">Family Mode <span class="pill">PREMIUM</span></div>
+      <div class="screen-sub">Stories that stay little-listener friendly</div>
+    </div>
+  </div>
+
+  <div class="scroll-area">
+
+    <div class="card">
+      <div class="hero-row">
+        <div class="hero-main">
+          <div class="hero-title">Family Mode</div>
+          <div class="hero-sub">Safer stories, chosen by you, for the little listeners.</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="familyToggle" checked><span class="track"></span></label>
+      </div>
+    </div>
+
+    <div class="section-h">Child Profiles</div>
+
+    <button class="add-card" onclick="showToast('Profiles arrive with real accounts')">
+      <span class="plus">＋</span>
+      <span class="t">Add a child profile</span>
+      <span class="s">Their own age, their own safe story shelf</span>
+    </button>
+
+    <!-- Generic example profile (draft placeholder structure) -->
+    <div class="card profile-row">
+      <div class="avatar">🧒</div>
+      <div class="p-main">
+        <div class="p-name">Little Listener</div>
+        <div class="p-sub">Ages 4–7 · Example profile</div>
+      </div>
+      <span class="pill blue">DRAFT</span>
+    </div>
+
+    <div class="section-h">Controls</div>
+
+    <div class="card">
+      <div class="field" style="margin-bottom:6px;">
+        <label>Content age limit</label>
+        <div class="chip-row" id="ageChips">
+          <button class="chip on">All Ages</button>
+          <button class="chip">Under 5</button>
+          <button class="chip">Ages 5–8</button>
+          <button class="chip">Ages 9–12</button>
+        </div>
+      </div>
+
+      <div class="ctl-row">
+        <div class="ctl-main">
+          <div class="ctl-title">No scary themes</div>
+          <div class="ctl-sub">Keep horror and frightening content out of family stories.</div>
+        </div>
+        <label class="toggle"><input type="checkbox" checked><span class="track"></span></label>
+      </div>
+
+      <div class="ctl-row">
+        <div class="ctl-main">
+          <div class="ctl-title">Bedtime mode</div>
+          <div class="ctl-sub">Calmer stories after 19:00.</div>
+        </div>
+        <label class="toggle"><input type="checkbox" checked><span class="track"></span></label>
+      </div>
+
+      <div class="ctl-row">
+        <div class="ctl-main">
+          <div class="ctl-title">Ask before new genres</div>
+          <div class="ctl-sub">Check with a grown-up before a brand-new genre.</div>
+        </div>
+        <label class="toggle"><input type="checkbox"><span class="track"></span></label>
+      </div>
+    </div>
+
+    <div class="card" style="padding:6px 16px;">
+      <button class="list-row" onclick="showToast('PIN setup arrives with real accounts')">
+        <span class="lr-icon">🔒</span>
+        <span class="lr-main">
+          <span class="lr-title">Family PIN</span><br>
+          <span class="lr-sub">Require a PIN to change these settings</span>
+        </span>
+        <span class="lr-arrow">›</span>
+      </button>
+    </div>
+
+    <div class="footnote">Family Mode is part of Premium.</div>
+
+  </div>
+
+<nav class="shelf">
+<a class="shelf-item" href="screen-05.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></svg><span>Home</span></a>
+<a class="shelf-item" href="screen-11.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg><span>Library</span></a>
+<a class="shelf-item shelf-create" href="screen-07.html"><span class="create-orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M12 3v18M3 12h18"/></svg></span><span>Create</span></a>
+<a class="shelf-item" href="screen-15.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.2 3.4-5 6.5-5s5.7 1.8 6.5 5"/><circle cx="17.5" cy="9" r="2.6"/><path d="M16 15.2c2.9.3 4.9 1.9 5.5 4.8"/></svg><span>Community</span></a>
+<a class="shelf-item" href="screen-13.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.3-6 8-6s7 2 8 6"/></svg><span>Profile</span></a>
+</nav>
+
+  <script src="../js/stars.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    // Age limit: single-select chips
+    const chipRow = document.getElementById('ageChips');
+    chipRow.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        chipRow.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
+        chip.classList.add('on');
+      });
+    });
+
+    // Family Mode master toggle feedback (setting itself is a later-phase account feature)
+    document.getElementById('familyToggle').addEventListener('change', (e) => {
+      showToast(e.target.checked ? 'Family Mode on' : 'Family Mode off');
+    });
+  </script>
+</div>
+</body>
+</html>

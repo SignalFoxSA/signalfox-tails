@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Tails — Screen 11 · Library</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  .story-row {
+    display: flex; gap: 13px; align-items: center;
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: 20px; padding: 13px 14px;
+    color: var(--text-white); text-decoration: none;
+  }
+  .cover {
+    width: 56px; height: 56px; flex: none;
+    border-radius: 16px;
+    background: rgba(26,111,255,0.14);
+    border: 1px solid var(--card-border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 27px;
+  }
+  .story-main { flex: 1; min-width: 0; }
+  .story-title { font-size: 15.5px; font-weight: 800; }
+  .story-meta { font-size: 12.5px; color: var(--text-muted); font-weight: 600; margin-top: 2px; }
+  .story-foot { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+  .story-foot .progress { flex: 1; }
+  .empty-state {
+    display: none;
+    text-align: center; padding: 34px 20px;
+    background: var(--card); border: 1px dashed var(--card-border); border-radius: 20px;
+    color: var(--text-muted); font-weight: 700; font-size: 14.5px;
+  }
+  .empty-state a { color: var(--gold); text-decoration: none; }
+  .empty-state.show { display: block; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <canvas id="starCanvas"></canvas>
+
+  <div class="status-bar"><span>9:41</span><span class="status-dots">●●●</span></div>
+
+  <div class="screen-head">
+    <div>
+      <div class="screen-title">My Library</div>
+      <div class="screen-sub">Every tale you've started, saved or finished</div>
+    </div>
+  </div>
+
+  <div class="scroll-area">
+    <div class="field">
+      <input type="search" id="libSearch" placeholder="Search your stories…" oninput="applyFilter()">
+    </div>
+
+    <div class="chip-row" id="libTabs">
+      <button class="chip on" data-filter="all" onclick="setTab(this)">All</button>
+      <button class="chip" data-filter="inprogress" onclick="setTab(this)">In Progress</button>
+      <button class="chip" data-filter="completed" onclick="setTab(this)">Completed</button>
+      <button class="chip" data-filter="saved" onclick="setTab(this)">Saved</button>
+    </div>
+
+    <div id="storyList" style="display:flex;flex-direction:column;gap:12px;">
+
+      <a class="story-row" href="screen-08.html" data-status="inprogress" data-title="the midnight compass">
+        <div class="cover">🧭</div>
+        <div class="story-main">
+          <div class="story-title">The Midnight Compass</div>
+          <div class="story-meta">Adventure · Teens · 4 min · Medium · ⭐ 4.5</div>
+          <div class="story-foot">
+            <div class="progress"><div style="width:45%"></div></div>
+            <span class="pill blue">In Progress · 45%</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="story-row" href="screen-08.html" data-status="saved" data-title="star drift protocol">
+        <div class="cover">🛸</div>
+        <div class="story-main">
+          <div class="story-title">Star Drift Protocol</div>
+          <div class="story-meta">Sci-Fi · All Ages · 2 min · Short</div>
+          <div class="story-foot"><span class="pill blue">Saved</span></div>
+        </div>
+      </a>
+
+      <a class="story-row" href="screen-08.html" data-status="saved" data-title="whispers in the pines">
+        <div class="cover">🌲</div>
+        <div class="story-main">
+          <div class="story-title">Whispers in the Pines</div>
+          <div class="story-meta">Mystery · Adults · 6 min · Long</div>
+          <div class="story-foot"><span class="pill blue">Saved</span><span class="pill">New</span></div>
+        </div>
+      </a>
+
+      <a class="story-row" href="screen-08.html" data-status="completed" data-title="the fox who swallowed a star">
+        <div class="cover">🌙</div>
+        <div class="story-main">
+          <div class="story-title">The Fox Who Swallowed a Star</div>
+          <div class="story-meta">Fantasy Adventure · Nova · 11 min</div>
+          <div class="story-foot"><span class="pill">Completed</span></div>
+        </div>
+      </a>
+
+      <a class="story-row" href="screen-08.html" data-status="saved" data-title="the iron summit">
+        <div class="cover">⛰️</div>
+        <div class="story-main">
+          <div class="story-title">The Iron Summit</div>
+          <div class="story-meta">Adventure · 5 min · ⭐ 4.8</div>
+          <div class="story-foot"><span class="pill blue">Saved</span></div>
+        </div>
+      </a>
+
+      <a class="story-row" href="screen-08.html" data-status="saved" data-title="blade of the north wind">
+        <div class="cover">⚔️</div>
+        <div class="story-main">
+          <div class="story-title">Blade of the North Wind</div>
+          <div class="story-meta">Fantasy · 7 min · ⭐ 4.6</div>
+          <div class="story-foot"><span class="pill blue">Saved</span></div>
+        </div>
+      </a>
+
+      <a class="story-row" href="screen-08.html" data-status="saved" data-title="lost at the edge">
+        <div class="cover">🌊</div>
+        <div class="story-main">
+          <div class="story-title">Lost at the Edge</div>
+          <div class="story-meta">Thriller · 4 min · ⭐ 4.7</div>
+          <div class="story-foot"><span class="pill blue">Saved</span></div>
+        </div>
+      </a>
+
+      <a class="story-row" href="screen-08.html" data-status="saved" data-title="the hollow grove">
+        <div class="cover">🌿</div>
+        <div class="story-main">
+          <div class="story-title">The Hollow Grove</div>
+          <div class="story-meta">Mystery · 5 min · ⭐ 4.5</div>
+          <div class="story-foot"><span class="pill blue">Saved</span></div>
+        </div>
+      </a>
+
+      <a class="story-row" href="screen-08.html" data-status="saved" data-title="the midnight garden of echoes">
+        <div class="cover">🌌</div>
+        <div class="story-main">
+          <div class="story-title">The Midnight Garden of Echoes</div>
+          <div class="story-meta">Fantasy · Nova · ~9 min</div>
+          <div class="story-foot"><span class="pill blue">Saved</span></div>
+        </div>
+      </a>
+
+    </div>
+
+    <div class="empty-state" id="libEmpty">
+      No stories here yet — <a href="screen-07.html">create your first one →</a>
+    </div>
+  </div>
+
+  <nav class="shelf">
+    <a class="shelf-item" href="screen-05.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></svg><span>Home</span></a>
+    <a class="shelf-item on" href="screen-11.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg><span>Library</span></a>
+    <a class="shelf-item shelf-create" href="screen-07.html"><span class="create-orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M12 3v18M3 12h18"/></svg></span><span>Create</span></a>
+    <a class="shelf-item" href="screen-15.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.2 3.4-5 6.5-5s5.7 1.8 6.5 5"/><circle cx="17.5" cy="9" r="2.6"/><path d="M16 15.2c2.9.3 4.9 1.9 5.5 4.8"/></svg><span>Community</span></a>
+    <a class="shelf-item" href="screen-13.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.3-6 8-6s7 2 8 6"/></svg><span>Profile</span></a>
+  </nav>
+
+  <script src="../js/stars.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    let activeTab = 'all';
+    function setTab(btn) {
+      document.querySelectorAll('#libTabs .chip').forEach(c => c.classList.remove('on'));
+      btn.classList.add('on');
+      activeTab = btn.dataset.filter;
+      applyFilter();
+    }
+    function applyFilter() {
+      const q = document.getElementById('libSearch').value.trim().toLowerCase();
+      let visible = 0;
+      document.querySelectorAll('#storyList .story-row').forEach(row => {
+        const matchesTab = activeTab === 'all' || row.dataset.status === activeTab;
+        const matchesSearch = !q || row.dataset.title.includes(q);
+        const show = matchesTab && matchesSearch;
+        row.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+      document.getElementById('libEmpty').classList.toggle('show', visible === 0);
+    }
+  </script>
+</div>
+</body>
+</html>

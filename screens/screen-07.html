@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Tails — Screen 07 · Story Generator</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  .seg { display: flex; background: var(--card); border: 1px solid var(--card-border); border-radius: 14px; padding: 4px; gap: 4px; }
+  .seg button {
+    flex: 1; padding: 10px 4px; border: none; border-radius: 11px; cursor: pointer;
+    background: transparent; color: var(--text-muted);
+    font-family: 'Nunito', sans-serif; font-size: 13.5px; font-weight: 800;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .seg button.on { background: var(--blue); color: #fff; box-shadow: 0 6px 16px rgba(26,111,255,0.35); }
+
+  .field textarea { resize: none; min-height: 86px; line-height: 1.5; }
+
+  a.voice-card { display: block; text-decoration: none; color: var(--text-white); }
+  .voice-row { display: flex; align-items: center; gap: 13px; }
+  .voice-face {
+    width: 50px; height: 50px; flex: none; border-radius: 50%;
+    background: rgba(255,193,62,0.14); border: 1.5px solid rgba(255,193,62,0.45);
+    display: flex; align-items: center; justify-content: center; font-size: 24px;
+  }
+  .voice-name { font-size: 15.5px; font-weight: 800; }
+  .voice-sub { font-size: 12.5px; color: var(--text-muted); font-weight: 600; margin-top: 2px; }
+
+  /* Generation state */
+  #genState { display: none; text-align: center; padding-top: 54px; }
+  .gen-moon { font-size: 84px; display: inline-block; animation: genPulse 1.6s ease-in-out infinite; }
+  @keyframes genPulse {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 6px rgba(255,193,62,0.35)); }
+    50% { transform: scale(1.12); filter: drop-shadow(0 0 26px rgba(255,193,62,0.75)); }
+  }
+  .gen-book { font-size: 40px; margin-top: 6px; animation: genPulse 1.6s ease-in-out infinite reverse; }
+  .gen-line {
+    font-family: 'Lora', serif; font-style: italic;
+    font-size: 19px; font-weight: 600; color: var(--gold-light);
+    min-height: 26px; margin: 26px 0 18px;
+    transition: opacity 0.35s ease;
+  }
+  #genState .progress { max-width: 260px; margin: 0 auto; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <canvas id="starCanvas"></canvas>
+
+  <div class="status-bar"><span>9:41</span><span class="status-dots">●●●</span></div>
+
+  <div class="screen-head">
+    <a class="back-btn" href="screen-05.html">‹</a>
+    <div>
+      <div class="screen-title">Create a Story</div>
+      <div class="screen-sub">Tell us the spark — Tails does the rest</div>
+    </div>
+  </div>
+
+  <div class="scroll-area" id="formArea">
+
+    <div class="section-h">Genres <a href="screen-06.html">All genres →</a></div>
+    <div class="chip-row" id="genreChips"></div>
+
+    <div class="field">
+      <label for="about">What's the story about?</label>
+      <textarea id="about" placeholder="A brave lighthouse keeper who befriends a storm…"></textarea>
+    </div>
+
+    <div class="field">
+      <label for="heroName">Hero's name (optional)</label>
+      <input type="text" id="heroName" placeholder="e.g. Nova">
+    </div>
+
+    <div class="section-h">Length</div>
+    <div class="seg" id="lengthSeg">
+      <button data-val="Short">Short</button>
+      <button data-val="Medium" class="on">Medium</button>
+      <button data-val="Long">Long</button>
+    </div>
+
+    <div class="section-h">Age Group</div>
+    <div class="seg" id="ageSeg">
+      <button data-val="Kids">Kids</button>
+      <button data-val="Teens">Teens</button>
+      <button data-val="Adults">Adults</button>
+      <button data-val="All Ages" class="on">All Ages</button>
+    </div>
+
+    <div class="section-h">Voice</div>
+    <a class="card voice-card" href="screen-09.html">
+      <div class="voice-row">
+        <div class="voice-face">🔊</div>
+        <div style="flex:1;">
+          <div class="voice-name">Nova</div>
+          <div class="voice-sub">warm storyteller</div>
+        </div>
+        <span style="color:var(--text-muted);font-size:18px;">›</span>
+      </div>
+    </a>
+
+    <button class="btn btn-gold" id="generateBtn">✨ Generate My Story</button>
+
+  </div>
+
+  <div class="scroll-area" id="genState">
+    <div>
+      <span class="gen-moon">🌙</span>
+      <div class="gen-book">📖</div>
+      <div class="gen-line" id="genLine">Dreaming up your world…</div>
+      <div class="progress"><div id="genBar" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <nav class="shelf">
+    <a class="shelf-item" href="screen-05.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></svg><span>Home</span></a>
+    <a class="shelf-item" href="screen-11.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg><span>Library</span></a>
+    <a class="shelf-item shelf-create" href="screen-07.html"><span class="create-orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M12 3v18M3 12h18"/></svg></span><span>Create</span></a>
+    <a class="shelf-item" href="screen-15.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.2 3.4-5 6.5-5s5.7 1.8 6.5 5"/><circle cx="17.5" cy="9" r="2.6"/><path d="M16 15.2c2.9.3 4.9 1.9 5.5 4.8"/></svg><span>Community</span></a>
+    <a class="shelf-item" href="screen-13.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.3-6 8-6s7 2 8 6"/></svg><span>Profile</span></a>
+  </nav>
+
+  <script src="../js/stars.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    const GENRES = [
+      { emoji: '🚀', name: 'Adventure' }, { emoji: '🧙', name: 'Fantasy' },
+      { emoji: '🛸', name: 'Sci-Fi' }, { emoji: '🔍', name: 'Mystery' },
+      { emoji: '💕', name: 'Romance' }, { emoji: '😱', name: 'Horror' },
+      { emoji: '🌿', name: 'Nature' }, { emoji: '🌊', name: 'Thriller' },
+      { emoji: '😂', name: 'Comedy' }, { emoji: '🏰', name: 'Fairy Tales' },
+      { emoji: '🦁', name: 'Animals' }, { emoji: '🦸', name: 'Superheroes' },
+      { emoji: '🦕', name: 'Dinosaurs' }, { emoji: '🏴‍☠️', name: 'Pirates' },
+      { emoji: '🐳', name: 'Ocean' }, { emoji: '🏺', name: 'History' }
+    ];
+
+    // Genre chips — single-select (radio behaviour).
+    let chosenGenre = 'Adventure';
+    try {
+      const saved = JSON.parse(localStorage.getItem('tails.genres') || '[]');
+      if (saved.length && GENRES.some(g => g.name === saved[0])) chosenGenre = saved[0];
+    } catch (e) { /* fall back to Adventure */ }
+
+    const chipRow = document.getElementById('genreChips');
+    function renderChips() {
+      chipRow.innerHTML = '';
+      GENRES.forEach(g => {
+        const b = document.createElement('button');
+        b.className = 'chip' + (g.name === chosenGenre ? ' on' : '');
+        b.textContent = g.emoji + ' ' + g.name;
+        b.addEventListener('click', () => { chosenGenre = g.name; renderChips(); });
+        chipRow.appendChild(b);
+      });
+    }
+    renderChips();
+
+    // Segmented controls — single-select each.
+    function wireSeg(id) {
+      const seg = document.getElementById(id);
+      seg.querySelectorAll('button').forEach(b => {
+        b.addEventListener('click', () => {
+          seg.querySelectorAll('button').forEach(x => x.classList.remove('on'));
+          b.classList.add('on');
+        });
+      });
+      return () => seg.querySelector('button.on').dataset.val;
+    }
+    const getLength = wireSeg('lengthSeg');
+    const getAge = wireSeg('ageSeg');
+
+    // Generate — save the draft, play the generation state, then open the player.
+    const LINES = [
+      'Dreaming up your world…',
+      'Giving your hero a voice…',
+      'Weaving chapter one…',
+      'Adding a little starlight…'
+    ];
+    document.getElementById('generateBtn').addEventListener('click', () => {
+      localStorage.setItem('tails.draft', JSON.stringify({
+        genre: chosenGenre,
+        about: document.getElementById('about').value.trim(),
+        heroName: document.getElementById('heroName').value.trim(),
+        length: getLength(),
+        age: getAge(),
+        voice: 'Nova'
+      }));
+
+      document.getElementById('formArea').style.display = 'none';
+      const state = document.getElementById('genState');
+      state.style.display = 'flex';
+      const lineEl = document.getElementById('genLine');
+      const bar = document.getElementById('genBar');
+
+      const started = Date.now(), DURATION = 3600;
+      let lineIdx = 0;
+      const lineTimer = setInterval(() => {
+        lineIdx = (lineIdx + 1) % LINES.length;
+        lineEl.style.opacity = 0;
+        setTimeout(() => { lineEl.textContent = LINES[lineIdx]; lineEl.style.opacity = 1; }, 350);
+      }, 1100);
+
+      const tick = setInterval(() => {
+        const pct = Math.min(100, ((Date.now() - started) / DURATION) * 100);
+        bar.style.width = pct + '%';
+        if (pct >= 100) {
+          clearInterval(tick);
+          clearInterval(lineTimer);
+          location.href = 'screen-08.html';
+        }
+      }, 50);
+    });
+  </script>
+</div>
+</body>
+</html>

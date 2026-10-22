@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Tails — Screen 06 · Genre Selection</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  .genre-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .genre-card {
+    position: relative;
+    background: var(--card); border: 1.5px solid var(--card-border);
+    border-radius: 20px; padding: 20px 12px 16px;
+    display: flex; flex-direction: column; align-items: center; gap: 9px;
+    cursor: pointer; color: var(--text-white);
+    font-family: 'Nunito', sans-serif;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  }
+  .genre-card .g-emoji { font-size: 36px; line-height: 1; }
+  .genre-card .g-name { font-size: 15px; font-weight: 800; }
+  .genre-card .g-check {
+    position: absolute; top: 10px; right: 10px;
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--blue); color: #fff;
+    display: none; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 900;
+  }
+  .genre-card.sel {
+    border-color: var(--blue);
+    background: rgba(26,111,255,0.14);
+    box-shadow: 0 0 0 1px var(--blue), 0 10px 26px rgba(26,111,255,0.25);
+  }
+  .genre-card.sel .g-check { display: flex; }
+
+  .sticky-bar {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 40;
+    padding: 16px 22px 26px;
+    background: linear-gradient(180deg, transparent, rgba(1,6,32,0.92) 34%);
+    display: flex; flex-direction: column; gap: 8px; align-items: center;
+  }
+  .count-line { font-size: 13.5px; font-weight: 800; color: var(--text-muted); }
+  .count-line b { color: var(--gold); }
+  .clear-btn {
+    background: none; border: none; cursor: pointer;
+    color: var(--text-muted); font-family: 'Nunito', sans-serif;
+    font-size: 13.5px; font-weight: 700; padding: 4px 10px;
+  }
+  .clear-btn:hover { color: var(--text-white); }
+</style>
+</head>
+<body>
+<div class="phone">
+  <canvas id="starCanvas"></canvas>
+
+  <div class="status-bar"><span>9:41</span><span class="status-dots">●●●</span></div>
+
+  <div class="screen-head">
+    <a class="back-btn" href="screen-05.html">‹</a>
+    <div>
+      <div class="screen-title">Pick Your Genres</div>
+      <div class="screen-sub">Choose as many as you like — 16 genres</div>
+    </div>
+  </div>
+
+  <div class="scroll-area no-shelf" style="padding-bottom:150px;">
+    <div class="genre-grid" id="genreGrid"></div>
+  </div>
+
+  <div class="sticky-bar">
+    <div class="count-line"><b id="selCount">0</b> selected</div>
+    <button class="btn btn-gold" id="continueBtn">Continue</button>
+    <button class="clear-btn" id="clearBtn">Clear</button>
+  </div>
+
+  <script src="../js/stars.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    const GENRES = [
+      { emoji: '🚀', name: 'Adventure' },
+      { emoji: '🧙', name: 'Fantasy' },
+      { emoji: '🛸', name: 'Sci-Fi' },
+      { emoji: '🔍', name: 'Mystery' },
+      { emoji: '💕', name: 'Romance' },
+      { emoji: '😱', name: 'Horror' },
+      { emoji: '🌿', name: 'Nature' },
+      { emoji: '🌊', name: 'Thriller' },
+      { emoji: '😂', name: 'Comedy' },
+      { emoji: '🏰', name: 'Fairy Tales' },
+      { emoji: '🦁', name: 'Animals' },
+      { emoji: '🦸', name: 'Superheroes' },
+      { emoji: '🦕', name: 'Dinosaurs' },
+      { emoji: '🏴‍☠️', name: 'Pirates' },
+      { emoji: '🐳', name: 'Ocean' },
+      { emoji: '🏺', name: 'History' }
+    ];
+
+    const grid = document.getElementById('genreGrid');
+    const countEl = document.getElementById('selCount');
+    const selected = new Set();
+
+    // Preselect anything saved from a previous visit.
+    try {
+      (JSON.parse(localStorage.getItem('tails.genres') || '[]')).forEach(n => selected.add(n));
+    } catch (e) { /* no saved genres */ }
+
+    function render() {
+      grid.innerHTML = '';
+      GENRES.forEach(g => {
+        const b = document.createElement('button');
+        b.className = 'genre-card' + (selected.has(g.name) ? ' sel' : '');
+        b.innerHTML = '<span class="g-check">✓</span><span class="g-emoji">' + g.emoji + '</span><span class="g-name">' + g.name + '</span>';
+        b.addEventListener('click', () => {
+          if (selected.has(g.name)) selected.delete(g.name); else selected.add(g.name);
+          render();
+        });
+        grid.appendChild(b);
+      });
+      countEl.textContent = selected.size;
+    }
+    render();
+
+    document.getElementById('clearBtn').addEventListener('click', () => { selected.clear(); render(); });
+
+    document.getElementById('continueBtn').addEventListener('click', () => {
+      if (!selected.size) { showToast('Pick at least one genre', false); return; }
+      // Keep the grid's order, not tap order.
+      const ordered = GENRES.map(g => g.name).filter(n => selected.has(n));
+      localStorage.setItem('tails.genres', JSON.stringify(ordered));
+      location.href = 'screen-07.html';
+    });
+  </script>
+</div>
+</body>
+</html>

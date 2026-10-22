@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Tails — Screen 02 · Onboarding</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  .content {
+    position: relative; z-index: 5;
+    flex: 1; width: 100%;
+    display: flex; flex-direction: column;
+    padding: 14px 30px 34px;
+  }
+
+  .top-row {
+    display: flex; justify-content: space-between; align-items: center;
+    min-height: 34px;
+  }
+  .counter { font-size: 13px; font-weight: 800; color: var(--text-muted); letter-spacing: 0.08em; }
+  .skip-link {
+    color: var(--text-muted); font-size: 14px; font-weight: 800;
+    text-decoration: none; padding: 8px 4px;
+  }
+  .skip-link:hover { color: var(--text-white); }
+
+  /* ── Carousel ── */
+  .viewport { overflow: hidden; width: 100%; margin-top: 8px; }
+  .track {
+    display: flex;
+    transition: transform 0.55s cubic-bezier(0.22, 0.9, 0.3, 1);
+    touch-action: pan-y;
+  }
+  .slide {
+    flex: 0 0 100%; width: 100%;
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center; padding: 6px 4px 0;
+  }
+  .slide-art { filter: drop-shadow(0 14px 28px rgba(26,111,255,0.30)); }
+  .kicker {
+    margin-top: 30px;
+    font-size: 12px; font-weight: 800;
+    letter-spacing: 0.34em; text-indent: 0.34em;
+    color: var(--blue-soft); text-transform: uppercase;
+  }
+  .slide-title { margin-top: 12px; font-size: 28px; font-weight: 900; line-height: 1.15; }
+  .slide-body {
+    margin-top: 14px; max-width: 290px;
+    font-size: 15.5px; font-weight: 600; line-height: 1.55;
+    color: var(--text-muted);
+  }
+
+  .spacer { flex: 1; }
+
+  /* ── Progress: segmented bar + dots ── */
+  .segments { display: flex; gap: 6px; width: 100%; margin-bottom: 16px; }
+  .segment { flex: 1; height: 4px; border-radius: 99px; background: rgba(255,255,255,0.14); overflow: hidden; }
+  .segment > div { height: 100%; width: 0; border-radius: 99px; background: var(--gold); }
+  .segment.done > div { width: 100%; }
+  .segment.active > div { animation: seg-fill 4.5s linear forwards; }
+  .segment.paused > div { animation-play-state: paused; }
+  @keyframes seg-fill { from { width: 0; } to { width: 100%; } }
+
+  .dots { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
+  .dot {
+    width: 9px; height: 9px; border-radius: 99px; border: none; cursor: pointer;
+    background: rgba(255,255,255,0.22); padding: 0;
+    transition: width 0.3s ease, background 0.3s ease;
+  }
+  .dot.on { width: 26px; background: var(--gold); }
+
+  .controls { display: flex; gap: 12px; width: 100%; }
+  .controls .btn-back { flex: 1; }
+  .controls .btn-next { flex: 1.5; }
+  .btn-back.disabled { opacity: 0.35; pointer-events: none; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <canvas id="starCanvas"></canvas>
+
+  <div class="status-bar"><span>9:41</span><span class="status-dots">●●●</span></div>
+
+  <div class="content">
+    <div class="top-row">
+      <span class="counter" id="counter">1 / 3</span>
+      <a class="skip-link" href="screen-03.html">Skip</a>
+    </div>
+
+    <div class="viewport" id="viewport">
+      <div class="track" id="track">
+
+        <!-- SLIDE 1 · Discover -->
+        <section class="slide">
+          <svg class="slide-art" width="210" height="180" viewBox="0 0 200 200" fill="none" aria-hidden="true">
+            <path d="M132 10a36 36 0 1 0 20 65 29 29 0 1 1-20-65z" fill="#FFC13E"/>
+            <path d="M44 30l2.2 5.4L51.6 37.6l-5.4 2.2L44 45.2l-2.2-5.4L36.4 37.6l5.4-2.2L44 30z" fill="#FFC13E"/>
+            <path d="M100 106c-15-11-36-15-54-11v52c18-4 39 0 54 11 15-11 36-15 54-11V95c-18-4-39 0-54 11z" fill="#EAF2FF"/>
+            <path d="M100 106c-15-11-36-15-54-11v52c18-4 39 0 54 11 15-11 36-15 54-11V95c-18-4-39 0-54 11z" stroke="#1A6FFF" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M100 106v52" stroke="#1A6FFF" stroke-width="3"/>
+            <path d="M58 106c10-2 20 0 30 5M58 120c10-2 20 0 30 5M58 134c10-2 20 0 30 5M112 111c10-5 20-7 30-5M112 125c10-5 20-7 30-5M112 139c10-5 20-7 30-5" stroke="#1A6FFF" stroke-width="2.4" stroke-linecap="round" opacity="0.55"/>
+            <path d="M100 160c-22 14-52 12-64-4-8-11 2-24 14-20 10 3 10 16 1 19" stroke="#1A6FFF" stroke-width="6" stroke-linecap="round"/>
+            <path d="M142 152c14-2 26-10 32-22" stroke="#6FA8FF" stroke-width="6" stroke-linecap="round"/>
+          </svg>
+          <div class="kicker">✦ Discover</div>
+          <h2 class="slide-title">Stories That Come Alive</h2>
+          <p class="slide-body">16 genres. Infinite adventures. A brand new world every single night.</p>
+        </section>
+
+        <!-- SLIDE 2 · Listen -->
+        <section class="slide">
+          <svg class="slide-art" width="210" height="180" viewBox="0 0 200 200" fill="none" aria-hidden="true">
+            <circle cx="100" cy="100" r="58" fill="rgba(26,111,255,0.12)" stroke="#1A6FFF" stroke-width="2.5"/>
+            <path d="M78 88v24h10l16 14V74l-16 14H78z" fill="#FFC13E"/>
+            <path d="M114 86a19 19 0 0 1 0 28M122 78a30 30 0 0 1 0 44M130 70a41 41 0 0 1 0 60" stroke="#6FA8FF" stroke-width="4.5" stroke-linecap="round"/>
+            <path d="M46 44l1.9 4.7 4.7 1.9-4.7 1.9L46 57.2l-1.9-4.7-4.7-1.9 4.7-1.9L46 44z" fill="#FFC13E"/>
+            <path d="M158 138l1.6 4 4 1.6-4 1.6-1.6 4-1.6-4-4-1.6 4-1.6 1.6-4z" fill="#6FA8FF"/>
+            <path d="M156 34a15 15 0 1 0 6 27 12 12 0 1 1-6-27z" fill="#FFC13E" opacity="0.9"/>
+          </svg>
+          <div class="kicker">✦ Listen</div>
+          <h2 class="slide-title">Narrated by AI Voices</h2>
+          <p class="slide-body">10 premium voices or clone your own. Every story told with emotion and personality.</p>
+        </section>
+
+        <!-- SLIDE 3 · Connect -->
+        <section class="slide">
+          <svg class="slide-art" width="210" height="180" viewBox="0 0 200 200" fill="none" aria-hidden="true">
+            <path d="M100 40c6-9 24-8 24 4 0 10-12 16-24 26C88 60 76 54 76 44c0-12 18-13 24-4z" fill="#FFC13E"/>
+            <circle cx="62" cy="98" r="15" fill="#6FA8FF"/>
+            <path d="M34 168c2-24 14-36 28-36s26 12 28 36" fill="#1A6FFF"/>
+            <circle cx="100" cy="88" r="18" fill="#FFD97A"/>
+            <path d="M66 172c2-28 16-42 34-42s32 14 34 42" fill="#FFC13E"/>
+            <circle cx="140" cy="98" r="15" fill="#6FA8FF"/>
+            <path d="M112 168c2-24 14-36 28-36s26 12 28 36" fill="#1A6FFF"/>
+            <path d="M30 60l1.6 4 4 1.6-4 1.6L30 71.2l-1.6-4-4-1.6 4-1.6L30 60z" fill="#6FA8FF"/>
+            <path d="M172 76l1.6 4 4 1.6-4 1.6-1.6 4-1.6-4-4-1.6 4-1.6 1.6-4z" fill="#FFC13E"/>
+          </svg>
+          <div class="kicker">✦ Connect</div>
+          <h2 class="slide-title">Stories for Everyone</h2>
+          <p class="slide-body">Share with family, discover favourites and create stories for the people you love.</p>
+        </section>
+
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="segments" id="segments">
+      <div class="segment"><div></div></div>
+      <div class="segment"><div></div></div>
+      <div class="segment"><div></div></div>
+    </div>
+
+    <div class="dots" id="dots">
+      <button class="dot on" onclick="goTo(0)" aria-label="Slide 1"></button>
+      <button class="dot" onclick="goTo(1)" aria-label="Slide 2"></button>
+      <button class="dot" onclick="goTo(2)" aria-label="Slide 3"></button>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-blue-outline btn-back disabled" id="backBtn" onclick="goBack()">‹ Back</button>
+      <button class="btn btn-gold btn-next" id="nextBtn" onclick="goNext()">Next ›</button>
+    </div>
+  </div>
+
+  <script src="../js/stars.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    const track = document.getElementById('track');
+    const counter = document.getElementById('counter');
+    const dots = Array.from(document.querySelectorAll('.dot'));
+    const segs = Array.from(document.querySelectorAll('.segment'));
+    const backBtn = document.getElementById('backBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const LAST = 2;
+    let idx = 0, autoTimer = null;
+
+    function render() {
+      track.style.transform = `translateX(-${idx * 100}%)`;
+      counter.textContent = `${idx + 1} / 3`;
+      dots.forEach((d, i) => d.classList.toggle('on', i === idx));
+      segs.forEach((s, i) => {
+        s.classList.remove('active', 'done', 'paused');
+        // Force reflow so the fill animation restarts on the active segment.
+        void s.offsetWidth;
+        if (i < idx) s.classList.add('done');
+        else if (i === idx && idx < LAST) s.classList.add('active');
+        else if (i === idx) s.classList.add('done');
+      });
+      backBtn.classList.toggle('disabled', idx === 0);
+      nextBtn.textContent = idx === LAST ? 'Get Started' : 'Next ›';
+    }
+
+    function startAuto() {
+      stopAuto();
+      if (idx >= LAST) return; // park on the final slide
+      autoTimer = setTimeout(() => goTo(idx + 1), 4500);
+    }
+    function stopAuto() { if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; } }
+    function resetAuto() { startAuto(); }
+
+    function goTo(n) {
+      idx = Math.max(0, Math.min(LAST, n));
+      render();
+      resetAuto();
+    }
+    function goNext() {
+      if (idx === LAST) { location.href = 'screen-03.html'; return; }
+      goTo(idx + 1);
+    }
+    function goBack() { if (idx > 0) goTo(idx - 1); }
+
+    // Touch swipe
+    const viewport = document.getElementById('viewport');
+    let touchX = null;
+    viewport.addEventListener('touchstart', (e) => { touchX = e.touches[0].clientX; stopAuto(); }, { passive: true });
+    viewport.addEventListener('touchend', (e) => {
+      if (touchX === null) return;
+      const dx = e.changedTouches[0].clientX - touchX;
+      if (Math.abs(dx) > 42) goTo(idx + (dx < 0 ? 1 : -1)); else resetAuto();
+      touchX = null;
+    }, { passive: true });
+
+    render();
+    startAuto();
+  </script>
+</div>
+</body>
+</html>
